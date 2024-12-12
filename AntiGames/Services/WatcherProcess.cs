@@ -2,7 +2,8 @@ using System.Diagnostics;
 
 namespace AntiGames.Services;
 
-public class WatcherProcess(ILogger<WatcherProcess> logger, 
+public class WatcherProcess(
+    ILogger<WatcherProcess> logger,
     DisallowWordsConfiguration disallowWordsConfiguration) : BackgroundService
 {
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -18,9 +19,13 @@ public class WatcherProcess(ILogger<WatcherProcess> logger,
 
             foreach (var process in s)
             {
+                string explicitWord = disallowWordsConfiguration.DisallowWords.FirstOrDefault(x =>
+                    process.MainWindowTitle.Contains(x, StringComparison.CurrentCultureIgnoreCase)) ?? string.Empty;
+                logger.LogInformation($"Process: {process.ProcessName}. Detected: {explicitWord}. Trying killing..");
                 try
                 {
                     process.Kill();
+                    logger.LogInformation($"Process: {process.ProcessName} killed");
                 }
                 catch (Exception e)
                 {

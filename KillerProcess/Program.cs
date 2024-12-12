@@ -1,4 +1,4 @@
-using AntiGames.Services;
+using KillerProcess.Services;
 
 var host = Host.CreateDefaultBuilder(args)
     .ConfigureServices(services =>

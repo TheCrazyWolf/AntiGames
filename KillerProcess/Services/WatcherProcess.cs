@@ -1,6 +1,6 @@
 using System.Diagnostics;
 
-namespace AntiGames.Services;
+namespace KillerProcess.Services;
 
 public class WatcherProcess(
     ILogger<WatcherProcess> logger,

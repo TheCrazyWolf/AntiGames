@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
 
-namespace AntiGames.Services;
+namespace KillerProcess.Services;
 
 public class DisallowWordsConfiguration
 {

@@ -1,8 +1,11 @@
+using System.Diagnostics;
+
 namespace AntiGames;
 
 public class Worker : BackgroundService
 {
     private readonly ILogger<Worker> _logger;
+    string[] keywords = { "игры", "онлайн", "example" , "roblox", "games"};
 
     public Worker(ILogger<Worker> logger)
     {
@@ -13,9 +16,15 @@ public class Worker : BackgroundService
     {
         while (!stoppingToken.IsCancellationRequested)
         {
-            if (_logger.IsEnabled(LogLevel.Information))
+            var processes = Process.GetProcesses();
+
+            var s = processes
+                .Where(x => !string.IsNullOrEmpty(x.MainWindowTitle))
+                .Where(x => keywords.Any(keyword => x.MainWindowTitle.ToLower().Contains(keyword.ToLower())));
+
+            foreach (var process in s)
             {
-                _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
+                process.Kill();
             }
 
             await Task.Delay(1000, stoppingToken);

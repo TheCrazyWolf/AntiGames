@@ -5,8 +5,6 @@ namespace AntiGames.Services;
 public class WatcherProccess(ILogger<WatcherProccess> logger, DisallowWordsConfiguration disallowWordsConfiguration)
     : BackgroundService
 {
-    private readonly ILogger<WatcherProccess> _logger = logger;
-
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         while (!stoppingToken.IsCancellationRequested)
@@ -20,7 +18,14 @@ public class WatcherProccess(ILogger<WatcherProccess> logger, DisallowWordsConfi
 
             foreach (var process in s)
             {
-                process.Kill();
+                try
+                {
+                    process.Kill();
+                }
+                catch (Exception e)
+                {
+                    logger.LogCritical(e.Message);
+                }
             }
 
             await Task.Delay(1000, stoppingToken);

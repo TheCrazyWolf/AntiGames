@@ -1,16 +1,12 @@
 using System.Diagnostics;
+using AntiGames.Services;
 
 namespace AntiGames;
 
-public class Worker : BackgroundService
+public class Worker(ILogger<Worker> logger, DisallowWordsConfiguration disallowWordsConfiguration)
+    : BackgroundService
 {
-    private readonly ILogger<Worker> _logger;
-    string[] keywords = { "игры", "онлайн", "example" , "roblox", "games"};
-
-    public Worker(ILogger<Worker> logger)
-    {
-        _logger = logger;
-    }
+    private readonly ILogger<Worker> _logger = logger;
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
@@ -20,7 +16,8 @@ public class Worker : BackgroundService
 
             var s = processes
                 .Where(x => !string.IsNullOrEmpty(x.MainWindowTitle))
-                .Where(x => keywords.Any(keyword => x.MainWindowTitle.ToLower().Contains(keyword.ToLower())));
+                .Where(x => disallowWordsConfiguration.DisallowWords
+                    .Any(keyword => x.MainWindowTitle.Contains(keyword, StringComparison.CurrentCultureIgnoreCase)));
 
             foreach (var process in s)
             {

@@ -1,12 +1,11 @@
 using System.Diagnostics;
-using AntiGames.Services;
 
-namespace AntiGames;
+namespace AntiGames.Services;
 
-public class Worker(ILogger<Worker> logger, DisallowWordsConfiguration disallowWordsConfiguration)
+public class WatcherProccess(ILogger<WatcherProccess> logger, DisallowWordsConfiguration disallowWordsConfiguration)
     : BackgroundService
 {
-    private readonly ILogger<Worker> _logger = logger;
+    private readonly ILogger<WatcherProccess> _logger = logger;
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {

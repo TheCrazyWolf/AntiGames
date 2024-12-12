@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AntiGames", "AntiGames\AntiGames.csproj", "{CD8F9BAA-4111-4E02-B7C0-D536AC6D27E0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KillerProcess", "KillerProcess\KillerProcess.csproj", "{CD8F9BAA-4111-4E02-B7C0-D536AC6D27E0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

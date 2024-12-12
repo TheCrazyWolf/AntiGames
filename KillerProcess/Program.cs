@@ -1,4 +1,3 @@
-using AntiGames;
 using AntiGames.Services;
 
 var host = Host.CreateDefaultBuilder(args)
@@ -7,6 +6,6 @@ var host = Host.CreateDefaultBuilder(args)
         services.AddHostedService<WatcherProcess>();
         services.AddSingleton<DisallowWordsConfiguration>();
     })
-    .UseWindowsService(options => { options.ServiceName = "AntiGames"; })
+    .UseWindowsService(options => { options.ServiceName = "KillerProcess"; })
     .Build();
 host.Run();

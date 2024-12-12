@@ -7,7 +7,7 @@ public class DisallowWordsConfiguration
     public IList<string> DisallowWords { get; private set; }
     private readonly IConfiguration _configuration;
 
-    private string _url =
+    private readonly string _url =
         "https://raw.githubusercontent.com/TheCrazyWolf/AntiGames/refs/heads/master/AntiGames/appsettings.json";
 
     public DisallowWordsConfiguration(IConfiguration configuration)

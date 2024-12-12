@@ -10,17 +10,16 @@ public class WatcherProcess(
     {
         while (!stoppingToken.IsCancellationRequested)
         {
-            var processes = Process.GetProcesses();
-
-            var s = processes
+            var processes = Process.GetProcesses()
                 .Where(x => !string.IsNullOrEmpty(x.MainWindowTitle))
                 .Where(x => disallowWordsConfiguration.DisallowWords
                     .Any(keyword => x.MainWindowTitle.Contains(keyword, StringComparison.CurrentCultureIgnoreCase)));
 
-            foreach (var process in s)
+            foreach (var process in processes)
             {
                 string explicitWord = disallowWordsConfiguration.DisallowWords.FirstOrDefault(x =>
                     process.MainWindowTitle.Contains(x, StringComparison.CurrentCultureIgnoreCase)) ?? string.Empty;
+                
                 logger.LogInformation($"Process: {process.ProcessName}. Detected: {explicitWord}. Trying killing..");
                 try
                 {
@@ -29,6 +28,7 @@ public class WatcherProcess(
                 }
                 catch (Exception e)
                 {
+                    logger.LogInformation($"Process: {process.ProcessName} failed killing:");
                     logger.LogCritical(e.Message);
                 }
             }

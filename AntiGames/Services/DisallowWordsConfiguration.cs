@@ -38,7 +38,7 @@ public class DisallowWordsConfiguration
     {
         try
         {
-            return JsonSerializer.Deserialize<ResultDissallow>(jsonContent)?.DisallowWords;
+            return JsonSerializer.Deserialize<ResultDisallow>(jsonContent)?.DisallowWords;
         }
         catch
         {
@@ -46,7 +46,7 @@ public class DisallowWordsConfiguration
         }
     }
 
-    internal class ResultDissallow
+    internal class ResultDisallow
     {
         public List<string> DisallowWords { get; set; } = default!;
     }

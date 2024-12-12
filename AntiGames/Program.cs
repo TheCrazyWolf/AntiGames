@@ -4,7 +4,7 @@ using AntiGames.Services;
 var host = Host.CreateDefaultBuilder(args)
     .ConfigureServices(services =>
     {
-        services.AddHostedService<WatcherProccess>();
+        services.AddHostedService<WatcherProcess>();
         services.AddSingleton<DisallowWordsConfiguration>();
     })
     .UseWindowsService(options => { options.ServiceName = "AntiGames"; })

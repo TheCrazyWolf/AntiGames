@@ -2,8 +2,8 @@ using System.Diagnostics;
 
 namespace AntiGames.Services;
 
-public class WatcherProccess(ILogger<WatcherProccess> logger, DisallowWordsConfiguration disallowWordsConfiguration)
-    : BackgroundService
+public class WatcherProcess(ILogger<WatcherProcess> logger, 
+    DisallowWordsConfiguration disallowWordsConfiguration) : BackgroundService
 {
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
@@ -28,7 +28,7 @@ public class WatcherProccess(ILogger<WatcherProccess> logger, DisallowWordsConfi
                 }
             }
 
-            await Task.Delay(1000, stoppingToken);
+            await Task.Delay(3000, stoppingToken);
         }
     }
 }

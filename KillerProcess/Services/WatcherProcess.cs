@@ -88,8 +88,14 @@ public class WatcherProcess : BackgroundService
     {
         if(argsMessage == null) return;
         
-        if (!_disallowWordsConfiguration.DisallowWords.Any(word => argsMessage.WindowTitle
-                .Contains(word, StringComparison.OrdinalIgnoreCase))) return;
+        if(!_disallowWordsConfiguration.Configuration.RestrictedNtUsers.
+               Any(user => argsMessage.User.Contains(user, StringComparison.InvariantCultureIgnoreCase))) return;
+        
+        if(!_disallowWordsConfiguration.Configuration.DisallowedProcesses.
+               Any(process => argsMessage.ProcessName.Contains(process, StringComparison.InvariantCultureIgnoreCase))) return;
+        
+        if (!_disallowWordsConfiguration.Configuration.DisallowedWords.Any(word => argsMessage.WindowTitle
+                .Contains(word, StringComparison.InvariantCultureIgnoreCase))) return;
         try
         {
             var currentProcess = Process.GetProcessById(argsMessage.ProcessId);

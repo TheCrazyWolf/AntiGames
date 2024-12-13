@@ -1,39 +1,109 @@
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.DirectoryServices;
+using System.IO.Pipes;
+using System.Security.AccessControl;
+using H.Pipes;
+using KillerProcess.Shared;
+using KillerProcess.Utils;
 
 namespace KillerProcess.Services;
 
-public class WatcherProcess(
-    ILogger<WatcherProcess> logger,
-    DisallowWordsConfiguration disallowWordsConfiguration) : BackgroundService
+[SuppressMessage("Interoperability", "CA1416:Проверка совместимости платформы")]
+public class WatcherProcess : BackgroundService
 {
+    private readonly ILogger<WatcherProcess> _logger;
+    private readonly DisallowWordsConfiguration _disallowWordsConfiguration;
+    private readonly Impersonation _impersonation;
+    private readonly PipeServer<WindowChangeMessage> _pipeServer;
+    private readonly string _path;
+    
+    public WatcherProcess(ILogger<WatcherProcess> logger, DisallowWordsConfiguration disallowWordsConfiguration, Impersonation impersonation)
+    {
+        _logger = logger;
+        _disallowWordsConfiguration = disallowWordsConfiguration;
+        _impersonation = impersonation;
+        _pipeServer = new PipeServer<WindowChangeMessage>("HwAgentWindowLogger");
+        _path = GetWindowLoggerPath();
+    }
+    
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        while (!stoppingToken.IsCancellationRequested)
+        RunWindowLogger();
+        
+        _pipeServer.CreatePipeStreamFunc = pipeName =>
         {
-            var processes = Process.GetProcesses()
-                .Where(x => !string.IsNullOrEmpty(x.MainWindowTitle))
-                .Where(x => disallowWordsConfiguration.DisallowWords
-                    .Any(keyword => x.MainWindowTitle.Contains(keyword, StringComparison.CurrentCultureIgnoreCase)));
-
-            foreach (var process in processes)
+            var found = false;
+            var userGroupName = "";
+            var machine = new DirectoryEntry("WinNT://" + Environment.MachineName + ",Computer");
+            foreach (DirectoryEntry child in machine.Children)
             {
-                string explicitWord = disallowWordsConfiguration.DisallowWords.FirstOrDefault(x =>
-                    process.MainWindowTitle.Contains(x, StringComparison.CurrentCultureIgnoreCase)) ?? string.Empty;
-                
-                logger.LogInformation($"Process: {process.ProcessName}. Detected: {explicitWord}. Trying killing..");
-                try
-                {
-                    process.Kill();
-                    logger.LogInformation($"Process: {process.ProcessName} killed");
-                }
-                catch (Exception e)
-                {
-                    logger.LogInformation($"Process: {process.ProcessName} failed killing:");
-                    logger.LogCritical(e.Message);
-                }
+                if (found || child.SchemaClassName != "Group" ||
+                    child.Name is not ("Пользователи" or "Users")) continue;
+                found = true;
+                userGroupName = child.Name;
             }
 
-            await Task.Delay(3000, stoppingToken);
+            var ps = new PipeSecurity();
+            ps.AddAccessRule(new PipeAccessRule(userGroupName,
+                PipeAccessRights.ReadWrite | PipeAccessRights.CreateNewInstance, AccessControlType.Allow));
+            ps.AddAccessRule(new PipeAccessRule("SYSTEM", PipeAccessRights.FullControl, AccessControlType.Allow));
+
+            return NamedPipeServerStreamAcl.Create(
+                pipeName,
+                PipeDirection.InOut,
+                1,
+                PipeTransmissionMode.Byte,
+                PipeOptions.Asynchronous | PipeOptions.WriteThrough,
+                0,
+                0,
+                ps);
+        };
+
+        _pipeServer.MessageReceived += (_, args) =>
+        {
+            if (stoppingToken.IsCancellationRequested) return;
+            _logger.LogInformation($"Window changed - user: {args.Message?.User}, window title: {args.Message?.WindowTitle}, process path: {args.Message?.ProcessPath}");
+            KillIfContainsExplicitWordProccess(args.Message);
+        };
+
+        _pipeServer.ClientDisconnected += (_, _) =>
+        {
+            if (stoppingToken.IsCancellationRequested) return;
+            _logger.LogWarning("Какой то пользователь попытался закрыть логгер, открываем заново");
+            RunWindowLogger();
+        };
+
+        await _pipeServer.StartAsync(stoppingToken);
+        
+        while (!stoppingToken.IsCancellationRequested)
+        {
+            await Task.Delay(1000, stoppingToken);
         }
+
+        await _pipeServer.StopAsync(stoppingToken);
     }
+
+    private void KillIfContainsExplicitWordProccess(WindowChangeMessage? argsMessage)
+    {
+        if(argsMessage == null) return;
+
+        if (!_disallowWordsConfiguration.DisallowWords.Any(word => argsMessage.WindowTitle
+                .Contains(word, StringComparison.OrdinalIgnoreCase))) return;
+        
+        var currentProcess = Process.GetProcessById(argsMessage.ProcessId);
+        // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+        if(currentProcess is null) return;
+
+        currentProcess.Kill();
+    }
+
+    private string GetWindowLoggerPath()
+    {
+        var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "HWAgent.WindowLogger.exe");
+        _logger.LogDebug("Window logger path: {path}", path);
+        return path;
+    }
+
+    private void RunWindowLogger() => _impersonation.ExecuteAppAsLoggedOnUser(_path);
 }

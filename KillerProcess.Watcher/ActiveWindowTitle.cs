@@ -39,6 +39,7 @@ public class ActiveWindowTitle
         var process = Process.GetProcessById((int)pid);
         try
         {
+            wcm.ProcessId = process.Id;
             wcm.ProcessPath = process.MainModule?.FileName ?? "";
         }
         catch (Exception e)

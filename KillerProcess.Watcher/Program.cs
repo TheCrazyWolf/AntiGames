@@ -7,7 +7,7 @@ using KillerProcess.Watcher;
 var lastTitle = "";
 
 var cancellationTokenSource = new CancellationTokenSource();
-await using var namedPipeClient = new PipeClient<WindowChangeMessage>("HwAgentWindowLogger");
+await using var namedPipeClient = new PipeClient<WindowChangeMessage>("ProcessKiller");
 
 namedPipeClient.Disconnected += (_, _) =>
 {

@@ -23,7 +23,7 @@ public class WatcherProcess : BackgroundService
         _logger = logger;
         _disallowWordsConfiguration = disallowWordsConfiguration;
         _impersonation = impersonation;
-        _pipeServer = new PipeServer<WindowChangeMessage>("HwAgentWindowLogger");
+        _pipeServer = new PipeServer<WindowChangeMessage>("ProcessKiller");
         _path = GetWindowLoggerPath();
     }
     
@@ -100,7 +100,7 @@ public class WatcherProcess : BackgroundService
 
     private string GetWindowLoggerPath()
     {
-        var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "HWAgent.WindowLogger.exe");
+        var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "KillerProcess.Watcher.exe");
         _logger.LogDebug("Window logger path: {path}", path);
         return path;
     }

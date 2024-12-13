@@ -1,10 +1,13 @@
 ﻿using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Security.Principal;
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
 
 namespace KillerProcess.Utils;
 
+[SuppressMessage("Interoperability", "CA1416:Проверка совместимости платформы")]
 public class Impersonation
 {
     #region DLL Imports

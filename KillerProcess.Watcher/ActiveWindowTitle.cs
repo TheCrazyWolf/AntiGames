@@ -42,7 +42,7 @@ public class ActiveWindowTitle
             wcm.ProcessId = process.Id;
             wcm.ProcessPath = process.MainModule?.FileName ?? "";
         }
-        catch (Exception e)
+        catch (Exception)
         {
             wcm.ProcessPath = "";
         }

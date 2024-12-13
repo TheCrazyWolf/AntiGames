@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Net.Http.Json;
+using System.Text.Json;
 using KillerProcess.Shared.Configs;
 
 namespace KillerProcess.Services;
@@ -8,7 +9,7 @@ public class DisallowWordsConfiguration
     public ConfigurationResponse Configuration { get; private set; } = new ConfigurationResponse();
     private readonly IConfiguration _configuration;
     private ILogger<DisallowWordsConfiguration> _logger;
-    private readonly string _url = "/restrictions/getRestrictions";
+    private readonly string _url = "restrictions/getRestrictions";
     private string fileName = "restrictions.json";
 
     public DisallowWordsConfiguration(IConfiguration configuration, ILogger<DisallowWordsConfiguration> logger)
@@ -24,7 +25,7 @@ public class DisallowWordsConfiguration
         Configuration = await GetFromFile();
         
         // ожидаем когда все процессы компа очнутся
-        await Task.Delay(15000);
+        //await Task.Delay(15000);
         
         // загружаем конфиг с сервера
         var actualConfig = await GetConfigFromUrl();
@@ -54,8 +55,7 @@ public class DisallowWordsConfiguration
         using HttpClient client = new HttpClient();
         try
         {
-            return TryDeserializeDisallowWordsOrGetNull<ConfigurationResponse>(
-                await client.GetStringAsync($"{_configuration["UrlServer"]}/{_url}"));
+            return  await client.GetFromJsonAsync<ConfigurationResponse>($"{_configuration["UrlServer"]}/{_url}");
         }
         catch
         {

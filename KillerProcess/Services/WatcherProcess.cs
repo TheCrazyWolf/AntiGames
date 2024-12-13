@@ -87,15 +87,20 @@ public class WatcherProcess : BackgroundService
     private void KillIfContainsExplicitWordProcess(WindowChangeMessage? argsMessage)
     {
         if(argsMessage == null) return;
-
+        
         if (!_disallowWordsConfiguration.DisallowWords.Any(word => argsMessage.WindowTitle
                 .Contains(word, StringComparison.OrdinalIgnoreCase))) return;
-        
-        var currentProcess = Process.GetProcessById(argsMessage.ProcessId);
-        // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
-        if(currentProcess is null) return;
-
-        currentProcess.Kill();
+        try
+        {
+            var currentProcess = Process.GetProcessById(argsMessage.ProcessId);
+            // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+            if(currentProcess is null) return;
+            currentProcess.Kill();
+        }
+        catch 
+        {
+            //
+        }
     }
 
     private string GetWindowLoggerPath()

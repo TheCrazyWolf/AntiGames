@@ -64,7 +64,7 @@ public class WatcherProcess : BackgroundService
         {
             if (stoppingToken.IsCancellationRequested) return;
             _logger.LogInformation($"Window changed - user: {args.Message?.User}, window title: {args.Message?.WindowTitle}, process path: {args.Message?.ProcessPath}");
-            KillIfContainsExplicitWordProccess(args.Message);
+            KillIfContainsExplicitWordProcess(args.Message);
         };
 
         _pipeServer.ClientDisconnected += (_, _) =>
@@ -84,7 +84,7 @@ public class WatcherProcess : BackgroundService
         await _pipeServer.StopAsync(stoppingToken);
     }
 
-    private void KillIfContainsExplicitWordProccess(WindowChangeMessage? argsMessage)
+    private void KillIfContainsExplicitWordProcess(WindowChangeMessage? argsMessage)
     {
         if(argsMessage == null) return;
 

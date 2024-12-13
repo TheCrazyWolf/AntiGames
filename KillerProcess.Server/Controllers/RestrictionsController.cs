@@ -16,7 +16,7 @@ public class RestrictionsController : ControllerBase
         _configuration = configuration;
     }
 
-    [HttpGet("GetRestrictions")]
+    [HttpGet("getRestrictions")]
     public ConfigurationResponse Get()
     {
         var response = new ConfigurationResponse
@@ -27,12 +27,5 @@ public class RestrictionsController : ControllerBase
         };
 
         return response;
-    }
-    
-    [HttpGet("GetTestKey")]
-    public IActionResult GetTestKey()
-    {
-        var testValue = _configuration["TestKey"];
-        return Ok(new { TestKey = testValue });
     }
 }

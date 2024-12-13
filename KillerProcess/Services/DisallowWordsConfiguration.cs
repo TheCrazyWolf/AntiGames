@@ -23,15 +23,18 @@ public class DisallowWordsConfiguration
     {
         // Загружаем последний конфиг
         Configuration = await GetFromFile();
-        
+
         // ожидаем когда все процессы компа очнутся
-        //await Task.Delay(15000);
-        
+#if DEBUG
+#else
+        await Task.Delay(15000);
+#endif
+
         // загружаем конфиг с сервера
         var actualConfig = await GetConfigFromUrl();
-        
-        if(actualConfig is null) return;
-        
+
+        if (actualConfig is null) return;
+
         Configuration = actualConfig;
         await SaveToFile(actualConfig);
     }
@@ -49,13 +52,13 @@ public class DisallowWordsConfiguration
             _logger.LogError(e, e.Message);
         }
     }
-    
+
     private async Task<ConfigurationResponse?> GetConfigFromUrl()
     {
         using HttpClient client = new HttpClient();
         try
         {
-            return  await client.GetFromJsonAsync<ConfigurationResponse>($"{_configuration["UrlServer"]}/{_url}");
+            return await client.GetFromJsonAsync<ConfigurationResponse>($"{_configuration["UrlServer"]}/{_url}");
         }
         catch
         {
@@ -68,7 +71,8 @@ public class DisallowWordsConfiguration
         try
         {
             FileStream fileStream = new FileStream(fileName, FileMode.Open);
-            return await JsonSerializer.DeserializeAsync<ConfigurationResponse>(fileStream) ?? new ConfigurationResponse();
+            return await JsonSerializer.DeserializeAsync<ConfigurationResponse>(fileStream) ??
+                   new ConfigurationResponse();
         }
         catch
         {
@@ -87,5 +91,4 @@ public class DisallowWordsConfiguration
             return Activator.CreateInstance<T?>();
         }
     }
-    
 }

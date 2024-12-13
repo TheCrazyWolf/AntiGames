@@ -90,22 +90,33 @@ public class WatcherProcess : BackgroundService
         
         if(!_disallowWordsConfiguration.Configuration.RestrictedNtUsers.
                Any(user => argsMessage.User.Contains(user, StringComparison.InvariantCultureIgnoreCase))) return;
-        
-        if(!_disallowWordsConfiguration.Configuration.DisallowedProcesses.
-               Any(process => argsMessage.ProcessName.Contains(process, StringComparison.InvariantCultureIgnoreCase))) return;
-        
-        if (!_disallowWordsConfiguration.Configuration.DisallowedWords.Any(word => argsMessage.WindowTitle
-                .Contains(word, StringComparison.InvariantCultureIgnoreCase))) return;
+
+        if (_disallowWordsConfiguration.Configuration.DisallowedProcesses.Any(process =>
+                argsMessage.ProcessName.Contains(process, StringComparison.InvariantCultureIgnoreCase)))
+        {
+            if(TryToKillProcessById(argsMessage.ProcessId)) return;
+        }
+
+        if (_disallowWordsConfiguration.Configuration.DisallowedWords.Any(word => argsMessage.WindowTitle
+                .Contains(word, StringComparison.InvariantCultureIgnoreCase)))
+        {
+            if(TryToKillProcessById(argsMessage.ProcessId)) return;
+        }
+    }
+
+    private bool TryToKillProcessById(int processId)
+    {
         try
         {
-            var currentProcess = Process.GetProcessById(argsMessage.ProcessId);
+            var currentProcess = Process.GetProcessById(processId);
             // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
-            if(currentProcess is null) return;
+            if(currentProcess is null) return false;
             currentProcess.Kill();
+            return true;
         }
-        catch 
+        catch
         {
-            //
+            return false;
         }
     }
 

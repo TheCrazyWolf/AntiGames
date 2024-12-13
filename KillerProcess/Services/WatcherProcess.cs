@@ -39,7 +39,7 @@ public class WatcherProcess : BackgroundService
             foreach (DirectoryEntry child in machine.Children)
             {
                 if (found || child.SchemaClassName != "Group" ||
-                    child.Name is not ("Пользователи" or "Users")) continue;
+                    child.Name is not ("Пользователи" or "Users" or "User")) continue;
                 found = true;
                 userGroupName = child.Name;
             }

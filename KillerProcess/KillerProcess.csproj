@@ -11,10 +11,10 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="H.Pipes" Version="2.0.47" />
+        <PackageReference Include="H.Pipes" Version="15.0.0" />
         <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.0"/>
         <PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="9.0.0" />
-        <PackageReference Include="System.DirectoryServices" Version="7.0.1" />
+        <PackageReference Include="System.DirectoryServices" Version="9.0.0" />
     </ItemGroup>
 
     <ItemGroup>

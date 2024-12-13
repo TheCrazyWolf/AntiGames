@@ -1,6 +1,0 @@
-@KillerProcess.Server_HostAddress = http://localhost:5079
-
-GET {{KillerProcess.Server_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###

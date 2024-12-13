@@ -28,9 +28,7 @@ while (!cancellationTokenSource.Token.IsCancellationRequested)
     {
         Console.WriteLine(currentWcm.WindowTitle);
         lastTitle = currentWcm.WindowTitle;
-
         currentWcm.User = Environment.UserName;
-
         await namedPipeClient.WriteAsync(currentWcm);
     }
 

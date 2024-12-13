@@ -1,27 +1,61 @@
 ﻿using System.Text.Json;
+using KillerProcess.Shared.Configs;
 
 namespace KillerProcess.Services;
 
 public class DisallowWordsConfiguration
 {
-    public IList<string> DisallowWords { get; private set; }
+    public ConfigurationResponse Configuration { get; private set; } = new ConfigurationResponse();
     private readonly IConfiguration _configuration;
+    private ILogger<DisallowWordsConfiguration> _logger;
+    private readonly string _url = "/restrictions/getRestrictions";
+    private string fileName = "restrictions.json";
 
-    private readonly string _url =
-        "https://raw.githubusercontent.com/TheCrazyWolf/KillerProcess/refs/heads/master/KillerProcess/appsettings.json";
-
-    public DisallowWordsConfiguration(IConfiguration configuration)
+    public DisallowWordsConfiguration(IConfiguration configuration, ILogger<DisallowWordsConfiguration> logger)
     {
         _configuration = configuration;
-        DisallowWords = GetOnlineDisallowWords() ?? GetDefaultDisallowWords();
+        _logger = logger;
+        Task.Run(InitializeAsync);
     }
 
-    private IList<string>? GetOnlineDisallowWords()
+    public async Task InitializeAsync()
+    {
+        // Загружаем последний конфиг
+        Configuration = await GetFromFile();
+        
+        // ожидаем когда все процессы компа очнутся
+        await Task.Delay(15000);
+        
+        // загружаем конфиг с сервера
+        var actualConfig = await GetConfigFromUrl();
+        
+        if(actualConfig is null) return;
+        
+        Configuration = actualConfig;
+        await SaveToFile(actualConfig);
+    }
+
+    private async Task SaveToFile(ConfigurationResponse actualConfig)
+    {
+        try
+        {
+            FileStream fileStream = new FileStream(fileName, FileMode.OpenOrCreate, FileAccess.Write);
+            await JsonSerializer.SerializeAsync(fileStream, actualConfig);
+            fileStream.Close();
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, e.Message);
+        }
+    }
+    
+    private async Task<ConfigurationResponse?> GetConfigFromUrl()
     {
         using HttpClient client = new HttpClient();
         try
         {
-            return TryDeserializeDisallowWordsOrGetNull(client.GetStringAsync(_url).GetAwaiter().GetResult());
+            return TryDeserializeDisallowWordsOrGetNull<ConfigurationResponse>(
+                await client.GetStringAsync($"{_configuration["UrlServer"]}/{_url}"));
         }
         catch
         {
@@ -29,25 +63,29 @@ public class DisallowWordsConfiguration
         }
     }
 
-    private IList<string> GetDefaultDisallowWords()
-    {
-        return _configuration.GetSection("DisallowWords").Get<IList<string>>() ?? new List<string>();
-    }
-
-    private IList<string>? TryDeserializeDisallowWordsOrGetNull(string jsonContent)
+    private async Task<ConfigurationResponse> GetFromFile()
     {
         try
         {
-            return JsonSerializer.Deserialize<ResultDisallow>(jsonContent)?.DisallowWords;
+            FileStream fileStream = new FileStream(fileName, FileMode.Open);
+            return await JsonSerializer.DeserializeAsync<ConfigurationResponse>(fileStream) ?? new ConfigurationResponse();
         }
         catch
         {
-            return null;
+            return new ConfigurationResponse();
         }
     }
 
-    internal class ResultDisallow
+    private T? TryDeserializeDisallowWordsOrGetNull<T>(string jsonContent)
     {
-        public List<string> DisallowWords { get; set; } = default!;
+        try
+        {
+            return JsonSerializer.Deserialize<T>(jsonContent);
+        }
+        catch
+        {
+            return Activator.CreateInstance<T?>();
+        }
     }
+    
 }

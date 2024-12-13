@@ -23,7 +23,7 @@ public class RestrictionsController : ControllerBase
         {
             DisallowedWords = _configuration.GetSection("ConfigWatcher:DisallowWords").Get<List<string>>() ?? new List<string>(),
             DisallowedProcesses = _configuration.GetSection("ConfigWatcher:DisallowProcesses").Get<List<string>>() ?? new List<string>(),
-            RestrictedUsers = _configuration.GetSection("ConfigWatcher:RestrictedNTUsers").Get<List<string>>() ?? new List<string>(),
+            RestrictedNtUsers = _configuration.GetSection("ConfigWatcher:RestrictedNTUsers").Get<List<string>>() ?? new List<string>(),
         };
 
         return response;

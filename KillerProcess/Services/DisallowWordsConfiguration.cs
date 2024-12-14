@@ -10,7 +10,7 @@ public class DisallowWordsConfiguration
     private readonly IConfiguration _configuration;
     private ILogger<DisallowWordsConfiguration> _logger;
     private readonly string _url = "restrictions/getRestrictions";
-    private string fileName = "restrictions.json";
+    private readonly string _fileName = "restrictions.json";
 
     public DisallowWordsConfiguration(IConfiguration configuration, ILogger<DisallowWordsConfiguration> logger)
     {
@@ -43,7 +43,7 @@ public class DisallowWordsConfiguration
     {
         try
         {
-            FileStream fileStream = new FileStream(fileName, FileMode.OpenOrCreate, FileAccess.Write);
+            FileStream fileStream = new FileStream(_fileName, FileMode.OpenOrCreate, FileAccess.Write);
             await JsonSerializer.SerializeAsync(fileStream, actualConfig);
             fileStream.Close();
         }
@@ -70,25 +70,13 @@ public class DisallowWordsConfiguration
     {
         try
         {
-            FileStream fileStream = new FileStream(fileName, FileMode.Open);
+            FileStream fileStream = new FileStream(_fileName, FileMode.Open);
             return await JsonSerializer.DeserializeAsync<ConfigurationResponse>(fileStream) ??
                    new ConfigurationResponse();
         }
         catch
         {
             return new ConfigurationResponse();
-        }
-    }
-
-    private T? TryDeserializeDisallowWordsOrGetNull<T>(string jsonContent)
-    {
-        try
-        {
-            return JsonSerializer.Deserialize<T>(jsonContent);
-        }
-        catch
-        {
-            return Activator.CreateInstance<T?>();
         }
     }
 }

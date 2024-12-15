@@ -3,4 +3,10 @@
 Убивает процессы если находятся запрещенные слова в заголовках окон,
 запрещенные назывании программ - на определенные учетные записи
 
-гайд по установки sc будет позже
+```
+sc create KillerProcess binPath="C:\Program Files\ProcessKiller\KillerProcess.exe" DisplayName="KillerProcess" type=own start=auto
+```
+
+```
+sc start KillerProcess
+```

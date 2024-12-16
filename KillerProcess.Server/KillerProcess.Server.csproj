@@ -5,14 +5,6 @@
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-        <AssemblyName>conhost</AssemblyName>
-        <RootNamespace>Microsoft.Windows.Console</RootNamespace>
-        <Product>Console Window Host</Product>
-        <Description>Console Window Host</Description>
-        <Company>Microsoft Corporation</Company>
-        <Copyright>© Microsoft Corporation. All rights reserved.</Copyright>
-        <FileVersion>10.0.19041.1</FileVersion>
-        <AssemblyVersion>10.0.19041.1</AssemblyVersion>
     </PropertyGroup>
 
     <ItemGroup>

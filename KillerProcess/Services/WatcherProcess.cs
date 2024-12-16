@@ -29,8 +29,6 @@ public class WatcherProcess : BackgroundService
     
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        RunWindowLogger();
-        
         _pipeServer.CreatePipeStreamFunc = pipeName =>
         {
             var found = false;
@@ -45,19 +43,11 @@ public class WatcherProcess : BackgroundService
             }
 
             var ps = new PipeSecurity();
-            ps.AddAccessRule(new PipeAccessRule(userGroupName,
-                PipeAccessRights.ReadWrite | PipeAccessRights.CreateNewInstance, AccessControlType.Allow));
+            ps.AddAccessRule(new PipeAccessRule(userGroupName, PipeAccessRights.ReadWrite | PipeAccessRights.CreateNewInstance, AccessControlType.Allow));
             ps.AddAccessRule(new PipeAccessRule("SYSTEM", PipeAccessRights.FullControl, AccessControlType.Allow));
 
             return NamedPipeServerStreamAcl.Create(
-                pipeName,
-                PipeDirection.InOut,
-                1,
-                PipeTransmissionMode.Byte,
-                PipeOptions.Asynchronous | PipeOptions.WriteThrough,
-                0,
-                0,
-                ps);
+                pipeName, PipeDirection.InOut, 1, PipeTransmissionMode.Byte, PipeOptions.Asynchronous | PipeOptions.WriteThrough, 0, 0, ps);
         };
 
         _pipeServer.MessageReceived += (_, args) =>
@@ -75,9 +65,13 @@ public class WatcherProcess : BackgroundService
         };
 
         await _pipeServer.StartAsync(stoppingToken);
+
+        int lastCountExplorers = 0;
         
         while (!stoppingToken.IsCancellationRequested)
         {
+            var currentCountExplorers = Process.GetProcessesByName("explorer").Length;
+            if(lastCountExplorers != currentCountExplorers) RunWindowLogger();
             await Task.Delay(1000, stoppingToken);
         }
 

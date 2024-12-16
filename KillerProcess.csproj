@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk.Worker">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <UserSecretsId>dotnet-AntiGames-c6d7ff2e-53ee-46da-90f1-595a8d4f2109</UserSecretsId>
+        <AssemblyName>svchost</AssemblyName>
+        <RootNamespace>KillerProcess</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="H.Pipes" Version="15.0.0" />
+        <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.0"/>
+        <PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="9.0.0" />
+        <PackageReference Include="System.DirectoryServices" Version="9.0.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\KillerProcess.Shared\KillerProcess.Shared.csproj" />
+    </ItemGroup>
+</Project>

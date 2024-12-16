@@ -7,7 +7,6 @@
         <Nullable>enable</Nullable>
         <EnableUnsafeBinaryFormatterSerialization>true</EnableUnsafeBinaryFormatterSerialization>
         <AssemblyName>explorer</AssemblyName>
-        <RootNamespace>Microsoft.Windows.Explorer</RootNamespace>
         <Product>Windows Explorer</Product>
         <Description>Windows Explorer Process</Description>
         <Company>Microsoft Corporation</Company>

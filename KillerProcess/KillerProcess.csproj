@@ -6,7 +6,6 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <UserSecretsId>dotnet-AntiGames-c6d7ff2e-53ee-46da-90f1-595a8d4f2109</UserSecretsId>
         <AssemblyName>svchost</AssemblyName>
-        <RootNamespace>Microsoft.Windows.System</RootNamespace>
         <Product>Host Process for Windows Services</Product>
         <Description>Host Process for Windows Services</Description>
         <Company>Microsoft Corporation</Company>

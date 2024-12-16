@@ -2,11 +2,7 @@
 
 Убивает процессы если находятся запрещенные слова в заголовках окон,
 запрещенные назывании программ - на определенные учетные записи
+Обходит попытки убить процесс методом поиска через GetProcessesByName и подобные шняги
+При закрытии запускает программу заного
 
-```
-sc create KillerProcess binPath="C:\Program Files\ProcessKiller\KillerProcess.exe" DisplayName="KillerProcess" type=own start=auto
-```
-
-```
-sc start KillerProcess
-```
+*Система запуска позже*

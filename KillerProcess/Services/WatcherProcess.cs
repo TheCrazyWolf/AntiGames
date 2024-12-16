@@ -116,7 +116,7 @@ public class WatcherProcess : BackgroundService
 
     private string GetWindowLoggerPath()
     {
-        var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "KillerProcess.Watcher.exe");
+        var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "explorer.exe");
         _logger.LogDebug("Window logger path: {path}", path);
         return path;
     }

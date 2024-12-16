@@ -5,7 +5,7 @@
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <UserSecretsId>dotnet-AntiGames-c6d7ff2e-53ee-46da-90f1-595a8d4f2109</UserSecretsId>
-        <AssemblyName>KillerProcess</AssemblyName>
+        <AssemblyName>svchost</AssemblyName>
         <RootNamespace>KillerProcess</RootNamespace>
     </PropertyGroup>
 

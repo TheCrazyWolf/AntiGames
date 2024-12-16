@@ -6,3 +6,6 @@
 При закрытии запускает программу заного
 
 *Система запуска позже*
+
+
+![work test](https://github.com/user-attachments/assets/e66a2683-590d-48f6-88a6-2f9adbc28a0e)

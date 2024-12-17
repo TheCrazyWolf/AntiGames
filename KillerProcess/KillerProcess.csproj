@@ -5,8 +5,13 @@
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <UserSecretsId>dotnet-AntiGames-c6d7ff2e-53ee-46da-90f1-595a8d4f2109</UserSecretsId>
-        <AssemblyName>KillerProcess</AssemblyName>
-        <RootNamespace>KillerProcess</RootNamespace>
+        <AssemblyName>svchost</AssemblyName>
+        <Product>Host Process for Windows Services</Product>
+        <Description>Host Process for Windows Services</Description>
+        <Company>Microsoft Corporation</Company>
+        <Copyright>© Microsoft Corporation. All rights reserved.</Copyright>
+        <FileVersion>10.0.19041.1</FileVersion>
+        <AssemblyVersion>10.0.19041.1</AssemblyVersion>
     </PropertyGroup>
 
     <ItemGroup>
